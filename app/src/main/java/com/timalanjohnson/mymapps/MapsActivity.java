@@ -1,9 +1,18 @@
 package com.timalanjohnson.mymapps;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,9 +48,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        try{
+            // Get current latitude and longitude and add a marker
+            LocationManager locMan = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            Location location = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            LatLng currentLocation = new LatLng(latitude, longitude);
+            mMap.addMarker(new MarkerOptions().position(currentLocation).title("You're location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        } catch (SecurityException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

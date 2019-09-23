@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "781129960017",
+    "firebase_url": "https://sinuous-canto-252417.firebaseio.com",
+    "project_id": "sinuous-canto-252417",
+    "storage_bucket": "sinuous-canto-252417.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781129960017:android:7aa20c67b7816e7d050670",
+        "android_client_info": {
+          "package_name": "com.timalanjohnson.mymapps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781129960017-2ft1i1gd9s5462krtmikhqshtlao44gt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCQE1epOL4DyBfCclxkE-yNev8K7FbSto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781129960017-2ft1i1gd9s5462krtmikhqshtlao44gt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
