@@ -39,6 +39,7 @@
             android:id="@+id/editTextSearch"
             android:hint="@string/searchHint"
             android:imeOptions="actionSearch"
+            android:singleLine="true"
             android:background="@null"></EditText>
 
     </RelativeLayout>

@@ -6,61 +6,57 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical"
-        android:layout_margin="8dp">
+        android:layout_centerHorizontal="true">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
-            android:textAlignment="center"
-            android:textSize="36dp"
-            android:text="Register"></TextView>
+            android:orientation="vertical"
+            android:layout_margin="8dp">
 
-        <EditText
-            android:id="@+id/editTextEmailRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
-            android:hint="@string/hintEnterEmail"
-            android:inputType="textEmailAddress"></EditText>
+            <EditText
+                android:id="@+id/editTextEmailRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:hint="@string/hintEnterEmail"
+                android:inputType="textEmailAddress"></EditText>
 
-        <EditText
-            android:id="@+id/editTextPasswordRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
-            android:hint="@string/hintEnterPassword"
-            android:inputType="textPassword"></EditText>
+            <EditText
+                android:id="@+id/editTextPasswordRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:hint="@string/hintEnterPassword"
+                android:inputType="textPassword"></EditText>
 
-        <Button
-            android:id="@+id/buttonRegisterUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/colorWhite"
-            android:text="@string/buttonRegisterUser"></Button>
+            <Button
+                android:id="@+id/buttonRegisterUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorWhite"
+                android:text="@string/buttonRegisterUser"></Button>
 
-        <TextView
-            android:id="@+id/textViewAlreadyRegistered"
-            android:text="@string/textViewAlreadyRegistered"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
-            android:textAlignment="center"></TextView>
+            <TextView
+                android:id="@+id/textViewAlreadyRegistered"
+                android:text="@string/textViewAlreadyRegistered"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:textAlignment="center"></TextView>
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 
 
 </RelativeLayout>
