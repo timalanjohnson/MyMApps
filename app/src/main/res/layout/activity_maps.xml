@@ -17,7 +17,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
         android:elevation="8dp"
         android:background="@drawable/white_background"
         android:id="@+id/topBarLayout">
@@ -43,5 +44,16 @@
             android:background="@null"></EditText>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/searchResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBarLayout"
+        android:layout_marginHorizontal="8dp"
+        android:elevation="8dp"
+        android:background="@drawable/white_background"
+        android:padding="16dp"/>
+
 
 </RelativeLayout>
