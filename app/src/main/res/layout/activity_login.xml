@@ -12,12 +12,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:layout_margin="16dp">
+        android:layout_margin="8dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:textAlignment="center"
             android:textSize="36dp"
             android:text="Login"></TextView>
@@ -26,7 +27,8 @@
             android:id="@+id/editTextEmailLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:hint="@string/hintEnterEmail"
             android:inputType="textEmailAddress"></EditText>
 
@@ -34,23 +36,47 @@
             android:id="@+id/editTextPasswordLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:hint="@string/hintEnterPassword"
             android:inputType="textPassword"></EditText>
 
-        <Button
-            android:id="@+id/buttonLoginUser"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/buttonLoginUser"></Button>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonLoginAnon"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/colorLightGrey"
+                android:text="@string/buttonLoginAnon"></Button>
+
+            <Button
+                android:id="@+id/buttonLoginUser"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorWhite"
+                android:text="@string/buttonLoginUser"></Button>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewNotRegistered"
             android:text="@string/textViewNotRegistered"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"></TextView>
+            android:textAlignment="center"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"></TextView>
 
     </LinearLayout>
 

@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button buttonLoginUser;
+    private Button buttonLoginAnon;
     private EditText editTextEmailLogin;
     private EditText editTextPasswordLogin;
     private TextView textViewNotRegistered;
@@ -36,15 +37,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        // Check if user is already logged in
+        if (firebaseAuth.getCurrentUser() != null) {
+            // Open MapsActivity
+            finish();
+            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+        }
+
         buttonLoginUser = (Button) findViewById(R.id.buttonLoginUser);
+        buttonLoginAnon = (Button) findViewById(R.id.buttonLoginAnon);
         editTextEmailLogin = (EditText) findViewById(R.id.editTextEmailLogin);
         editTextPasswordLogin = (EditText) findViewById(R.id.editTextPasswordLogin);
         textViewNotRegistered = (TextView) findViewById(R.id.textViewNotRegistered);
 
         progressDialog = new ProgressDialog(this);
 
+        buttonLoginAnon.setOnClickListener(this);
         buttonLoginUser.setOnClickListener(this);
         textViewNotRegistered.setOnClickListener(this);
+    }
+
+    private void loginAnon() {
+        // Open MapsActivity
+        finish();
+        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
     }
 
     private void loginUser(){
@@ -90,6 +106,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if (view == buttonLoginUser) {
            loginUser();
+        }
+        if (view == buttonLoginAnon) {
+            loginAnon();
         }
 
         if (view == textViewNotRegistered) {

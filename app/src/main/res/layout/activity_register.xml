@@ -12,12 +12,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:layout_margin="16dp">
+        android:layout_margin="8dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:textAlignment="center"
             android:textSize="36dp"
             android:text="Register"></TextView>
@@ -26,7 +27,8 @@
             android:id="@+id/editTextEmailRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:hint="@string/hintEnterEmail"
             android:inputType="textEmailAddress"></EditText>
 
@@ -34,7 +36,8 @@
             android:id="@+id/editTextPasswordRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:hint="@string/hintEnterPassword"
             android:inputType="textPassword"></EditText>
 
@@ -42,7 +45,10 @@
             android:id="@+id/buttonRegisterUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorWhite"
             android:text="@string/buttonRegisterUser"></Button>
 
         <TextView
@@ -50,6 +56,8 @@
             android:text="@string/textViewAlreadyRegistered"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
             android:textAlignment="center"></TextView>
 
     </LinearLayout>

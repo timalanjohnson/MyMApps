@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">MyMApps</string>
     <string name="title_activity_maps">Map</string>
-    <string name="hintEnterEmail">Enter email address</string>
-    <string name="hintEnterPassword">Enter password</string>
+    <string name="hintEnterEmail">Enter Email Address</string>
+    <string name="hintEnterPassword">Enter Password</string>
     <string name="buttonRegisterUser">Register</string>
     <string name="textViewAlreadyRegistered">Already registered? Login here.</string>
     <string name="textViewNotRegistered">Not registered? Sign up here.</string>
     <string name="buttonLoginUser">Login</string>
+    <string name="buttonLoginAnon">Login Anonymously</string>
+    <string name="searchHint">Enter Address</string>
 </resources>
