@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
@@ -64,24 +66,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Widgets
     private EditText mSearchText;
-    private TextView mSearchResult;
+    //private TextView mSearchResult;
 
     // Variables
     private GoogleMap mMap;
     private Boolean mLocationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationClient;
 
+    private ArrayList<String> placeIDs = new ArrayList<>();
+    private ArrayList<String> placePrimaryTexts = new ArrayList<>();
+    private ArrayList<String> placeSecondaryTexts = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mSearchText = (EditText) findViewById(R.id.editTextSearch);
-        mSearchResult = (TextView) findViewById(R.id.searchResult);
+        //mSearchResult = (TextView) findViewById(R.id.searchResult);
 
         Places.initialize(getApplicationContext(), getString(R.string.API_KEY)); // Initialize the Places SDK
 
-
         getLocationPermissions(); // Includes init().
+    }
+
+    private void initArrayLists(){
+        placeIDs.add("PlaceIdNumber1");
+        placePrimaryTexts.add("1 Primary Text");
+        placeSecondaryTexts.add("Secondary Text");
+
+        placeIDs.add("PlaceIdNumber2");
+        placePrimaryTexts.add("2 Primary Text");
+        placeSecondaryTexts.add("Secondary Text");
+
+        placeIDs.add("PlaceIdNumber3");
+        placePrimaryTexts.add("3 Primary Text");
+        placeSecondaryTexts.add("Secondary Text");
+
+        placeIDs.add("PlaceIdNumber4");
+        placePrimaryTexts.add("4 Primary Text");
+        placeSecondaryTexts.add("Secondary Text");
+        initRecyclerView();
     }
 
     private void searchSuggestions(){
@@ -91,7 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String query = mSearchText.getText().toString();
 
-        mSearchResult.setVisibility(View.VISIBLE);
+        //mSearchResult.setVisibility(View.VISIBLE);
 
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
 
@@ -102,10 +126,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
                 Log.i(TAG, prediction.getPlaceId());
                 Log.i(TAG, prediction.getPrimaryText(null).toString());
-                mResult.append(" ").append(prediction.getPrimaryText(null) + "\n");
+                //mResult.append(" ").append(prediction.getPrimaryText(null) + "\n");
+                // Add IDs and Texts to ArrayLists
             }
 
-            mSearchResult.setText(String.valueOf(mResult));
+            //mSearchResult.setText(String.valueOf(mResult));
 
         }).addOnFailureListener((exception) -> {
 
@@ -115,6 +140,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
         });
+
+        /*
+         * This code is for autocomplete suggestions but uses a lot of API calls so it is currently not being used.
 
         mSearchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -132,18 +160,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+         */
+    }
+
+    private void initRecyclerView(){
+        Log.d(TAG, "initRecyclerView: init");
+        RecyclerView recyclerView = findViewById(R.id.searchResult);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, placeIDs, placePrimaryTexts, placeSecondaryTexts);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void init(){
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                    || actionId == EditorInfo.IME_ACTION_DONE
-                    || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                    || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                if (actionId == EditorInfo.IME_ACTION_SEARCH){
+
                     // Display suggestions
-                    searchSuggestions();
+                    // searchSuggestions();
+                    Log.d(TAG, "onEditorAction: called.");
+                        initArrayLists();
+
                     // Execute search
                     // geoLocate();
                 }
