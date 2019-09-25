@@ -8,12 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,39 +17,28 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -65,14 +50,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 15f;
 
     // Widgets
-    private EditText mSearchText;
-    //private TextView mSearchResult;
+    private EditText searchText;
+    private RecyclerView searchRecycler;
 
     // Variables
     private GoogleMap mMap;
-    private Boolean mLocationPermissionGranted = false;
+    private Boolean locationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationClient;
-
     private ArrayList<String> placeIDs = new ArrayList<>();
     private ArrayList<String> placePrimaryTexts = new ArrayList<>();
     private ArrayList<String> placeSecondaryTexts = new ArrayList<>();
@@ -81,70 +65,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        mSearchText = (EditText) findViewById(R.id.editTextSearch);
-        //mSearchResult = (TextView) findViewById(R.id.searchResult);
+        searchText = (EditText) findViewById(R.id.editTextSearch);
 
         Places.initialize(getApplicationContext(), getString(R.string.API_KEY)); // Initialize the Places SDK
 
-        getLocationPermissions(); // Includes init().
+        getLocationPermissions();
+
+        init();
     }
 
-    private void initArrayLists(){
-        placeIDs.add("PlaceIdNumber1");
-        placePrimaryTexts.add("1 Primary Text");
-        placeSecondaryTexts.add("Secondary Text");
+    private void init(){
+        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH){
 
-        placeIDs.add("PlaceIdNumber2");
-        placePrimaryTexts.add("2 Primary Text");
-        placeSecondaryTexts.add("Secondary Text");
+                    // Suggests places from search and displays them
+                    searchSuggestions();
 
-        placeIDs.add("PlaceIdNumber3");
-        placePrimaryTexts.add("3 Primary Text");
-        placeSecondaryTexts.add("Secondary Text");
-
-        placeIDs.add("PlaceIdNumber4");
-        placePrimaryTexts.add("4 Primary Text");
-        placeSecondaryTexts.add("Secondary Text");
-        initRecyclerView();
-    }
-
-    private void searchSuggestions(){
-        PlacesClient placesClient = Places.createClient(this);    // Create a new Places client instance
-
-        final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-        String query = mSearchText.getText().toString();
-
-        //mSearchResult.setVisibility(View.VISIBLE);
-
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
-
-        placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
-
-            StringBuilder mResult = new StringBuilder();
-
-            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                Log.i(TAG, prediction.getPlaceId());
-                Log.i(TAG, prediction.getPrimaryText(null).toString());
-                //mResult.append(" ").append(prediction.getPrimaryText(null) + "\n");
-                // Add IDs and Texts to ArrayLists
+                    // Execute search
+                    // geoLocate();
+                }
+                return false;
             }
-
-            //mSearchResult.setText(String.valueOf(mResult));
-
-        }).addOnFailureListener((exception) -> {
-
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                Log.e(TAG, "Place not found: " + apiException.getStatusCode());
-            }
-
         });
 
-        /*
-         * This code is for autocomplete suggestions but uses a lot of API calls so it is currently not being used.
-
-        mSearchText.addTextChangedListener(new TextWatcher() {
+        searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 // Do nothing
@@ -153,95 +99,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 // Autocomplete
+                if(searchText.getText().toString().equals("")){
+                    hideSearchRecycler();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-         */
-    }
-
-    private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView: init");
-        RecyclerView recyclerView = findViewById(R.id.searchResult);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, placeIDs, placePrimaryTexts, placeSecondaryTexts);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void init(){
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH){
-
-                    // Display suggestions
-                    // searchSuggestions();
-                    Log.d(TAG, "onEditorAction: called.");
-                        initArrayLists();
-
-                    // Execute search
-                    // geoLocate();
-                }
-                return false;
+                // Do nothing
             }
         });
     }
 
-    private void geoLocate() {
-        Log.d(TAG, "geoLocate(): geolocating");
-
-        String searchString = mSearchText.getText().toString();
-
-        Geocoder geocoder = new Geocoder(getApplicationContext());
-
-        List<Address> list = new ArrayList<>();
-
-        try{
-            list = geocoder.getFromLocationName(searchString, 1);
-        } catch (IOException e) {
-            Log.e(TAG, "geoLocate(): IOException: " + e.getMessage());
-        }
-
-        if (list.size() > 0) {
-            Address address = list.get(0);
-            Log.d(TAG, "geoLocate(): found a location: " + address.toString());
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
-        }
-
-    }
-
-    // Moves camera to a location with a LatLng object
-    private void moveCamera(LatLng latLng, float zoom){
-        Log.d(TAG, "moveCamera() called.");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-    }
-
-    // Moves camera to a location with a LatLng object and adds a marker
-    private void moveCamera(LatLng latLng, float zoom, String title){
-        Log.d(TAG, "moveCamera() called.");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        mMap.clear();
-        MarkerOptions options = new MarkerOptions().position(latLng).title(title);
-        mMap.addMarker(options);
-    }
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady() called.");
         mMap = googleMap;
 
-        if (mLocationPermissionGranted){
+        if (locationPermissionGranted){
             getDeviceLocation();
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -249,7 +124,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setCompassEnabled(true);
             mMap.getUiSettings().setMapToolbarEnabled(true);
             mMap.setTrafficEnabled(true);
-            init();
         }
     }
 
@@ -261,6 +135,82 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
+    private void searchSuggestions(){
+        PlacesClient placesClient = Places.createClient(this);    // Create a new Places client instance
+
+        final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+        String query = searchText.getText().toString();
+
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
+
+        placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
+
+            placeIDs.clear();
+            placePrimaryTexts.clear();
+            placeSecondaryTexts.clear();
+
+            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                Log.i(TAG, prediction.getPlaceId());
+                Log.i(TAG, prediction.getPrimaryText(null).toString());
+
+                // Add IDs and Texts to ArrayLists
+                placeIDs.add(prediction.getPlaceId());
+                placePrimaryTexts.add(prediction.getPrimaryText(null).toString());
+                placeSecondaryTexts.add(prediction.getSecondaryText(null).toString());
+            }
+
+            initSearchRecycler();
+
+        }).addOnFailureListener((exception) -> {
+
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                Log.e(TAG, "Place not found: " + apiException.getStatusCode());
+            }
+
+        });
+    }
+    private void initSearchRecycler(){
+        Log.d(TAG, "initRecyclerView: called. Reading ArrayLists");
+        searchRecycler = findViewById(R.id.searchRecyclerView);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, placeIDs, placePrimaryTexts, placeSecondaryTexts);
+        searchRecycler.setAdapter(adapter);
+        searchRecycler.setLayoutManager(new LinearLayoutManager(this));
+        displaySearchRecycler();
+
+        // Listens for recycler selection and gets the Place ID of selected destination.
+        adapter.SetOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(int position) {
+                Log.d(TAG, "OnItemClick: called.");
+                String id = adapter.placeIdList.get(position);
+                Toast.makeText(MapsActivity.this, id, Toast.LENGTH_SHORT).show();
+                
+                // TODO
+                // Find Destination by Place ID
+                // Move camera to destination
+                // Display navigate button
+            }
+        });
+    }
+
+    private void displaySearchRecycler(){
+        Log.d(TAG, "displaySearchRecycler: called");
+        searchRecycler.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSearchRecycler(){
+        Log.d(TAG, "hideSearchRecycler: called");
+        searchRecycler.setVisibility(View.GONE);
+    }
+
+    // Moves camera to a location with a LatLng object
+    private void moveCamera(LatLng latLng, float zoom){
+        Log.d(TAG, "moveCamera() called.");
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
     // Get the current device location and moves camera to location
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation() called.");
@@ -268,7 +218,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         try{
-            if(mLocationPermissionGranted){
+            if(locationPermissionGranted){
                 final Task location = mFusedLocationClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -301,7 +251,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
+            locationPermissionGranted = true;
             initMap();
         } else {
             ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
@@ -312,18 +262,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult() called.");
-        mLocationPermissionGranted = false;
+        locationPermissionGranted = false;
 
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:{
                 if (grantResults.length > 0) {
                     for (int i = 0; i < grantResults.length; i++){
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                            mLocationPermissionGranted = false;
+                            locationPermissionGranted = false;
                             return;
                         }
                     }
-                    mLocationPermissionGranted = true;
+                    locationPermissionGranted = true;
                     initMap();
                 }
             }

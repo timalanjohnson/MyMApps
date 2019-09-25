@@ -19,9 +19,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String TAG = "RecyclerViewAdapterLog";
 
     private Context context;
-    private ArrayList<String> placeIdList = new ArrayList<>();
+    public ArrayList<String> placeIdList = new ArrayList<>();
     private ArrayList<String> primaryTextList = new ArrayList<>();
     private ArrayList<String> secondaryTextList = new ArrayList<>();
+
+    private OnItemClickListener itemListener;
+
+    public interface OnItemClickListener {
+        void OnItemClick(int position);
+    }
+
+    public void SetOnItemClickListener(OnItemClickListener listener){
+        itemListener = listener;
+    }
 
     public RecyclerViewAdapter(Context context, ArrayList<String> placeIdList, ArrayList<String> primaryTextList, ArrayList<String> secondaryTextList) {
         this.context = context;
@@ -43,6 +53,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             listItem = itemView.findViewById(R.id.locationListItem);
             primaryText = itemView.findViewById(R.id.locationPrimaryText);
             secondaryText = itemView.findViewById(R.id.locationSecondaryText);
+            /*
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            itemListener.OnItemClick(position);
+                        }
+                    }
+                }
+            });
+            */
         }
     }
 
@@ -66,7 +89,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Location selected by user: " + holder.primaryText.getText().toString());
-                Toast.makeText(context, holder.placeId, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, holder.primaryText.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                if (itemListener != null) {
+                    itemListener.OnItemClick(position);
+                    Log.d(TAG, "itemListener" + holder.placeId);
+                }
             }
         });
     }

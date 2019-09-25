@@ -46,7 +46,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResult"
+        android:id="@+id/searchRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/topBarLayout"
@@ -54,7 +54,7 @@
         android:elevation="8dp"
         android:background="@drawable/white_background"
         android:padding="16dp"
-        android:visibility="visible"></androidx.recyclerview.widget.RecyclerView>
+        android:visibility="gone"></androidx.recyclerview.widget.RecyclerView>
 
 
 

@@ -17,8 +17,7 @@
         android:id="@+id/locationSecondaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/locationPrimaryText"
-        android:layout_marginLeft="8dp"
+        android:layout_below="@id/locationPrimaryText"
         android:text="Secondary Text"
         android:textColor="@color/colorMidGrey"></TextView>
 
