@@ -186,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d(TAG, "OnItemClick: called.");
                 String id = adapter.placeIdList.get(position);
                 Toast.makeText(MapsActivity.this, id, Toast.LENGTH_SHORT).show();
-                
+
                 // TODO
                 // Find Destination by Place ID
                 // Move camera to destination
