@@ -53,7 +53,8 @@
         android:layout_marginHorizontal="8dp"
         android:elevation="8dp"
         android:background="@drawable/white_background"
-        android:padding="16dp"/>
+        android:padding="16dp"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

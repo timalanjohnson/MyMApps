@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -79,9 +80,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Places.initialize(getApplicationContext(), getString(R.string.API_KEY)); // Initialize the Places SDK
 
-        final PlacesClient placesClient = Places.createClient(this);    // Create a new Places client instance
+
+        getLocationPermissions(); // Includes init().
+    }
+
+    private void searchSuggestions(){
+        PlacesClient placesClient = Places.createClient(this);    // Create a new Places client instance
 
         final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+        String query = mSearchText.getText().toString();
+
+        mSearchResult.setVisibility(View.VISIBLE);
+
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
+
+        placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
+
+            StringBuilder mResult = new StringBuilder();
+
+            for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                Log.i(TAG, prediction.getPlaceId());
+                Log.i(TAG, prediction.getPrimaryText(null).toString());
+                mResult.append(" ").append(prediction.getPrimaryText(null) + "\n");
+            }
+
+            mSearchResult.setText(String.valueOf(mResult));
+
+        }).addOnFailureListener((exception) -> {
+
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                Log.e(TAG, "Place not found: " + apiException.getStatusCode());
+            }
+
+        });
 
         mSearchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -91,34 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String query = mSearchText.getText().toString();
-
-                // mSearchResult.setText(query);
-
-                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
-
-                placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
-
-                    StringBuilder mResult = new StringBuilder();
-
-                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                        mResult.append(" ").append(prediction.getFullText(null) + "\n");
-                        Log.i(TAG, prediction.getPlaceId());
-                        Log.i(TAG, prediction.getPrimaryText(null).toString());
-                        mResult.append(" ").append(prediction.getPrimaryText(null) + "\n");
-
-                    }
-
-                    mSearchResult.setText(String.valueOf(mResult));
-
-                }).addOnFailureListener((exception) -> {
-
-                    if (exception instanceof ApiException) {
-                        ApiException apiException = (ApiException) exception;
-                        Log.e(TAG, "Place not found: " + apiException.getStatusCode());
-                    }
-
-                });
+                // Autocomplete
             }
 
             @Override
@@ -126,16 +132,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-        getLocationPermissions(); // Includes init().
     }
 
     private void init(){
-
-
-
-
-
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -143,8 +142,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     || actionId == EditorInfo.IME_ACTION_DONE
                     || keyEvent.getAction() == KeyEvent.ACTION_DOWN
                     || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                    // Display suggestions
+                    searchSuggestions();
                     // Execute search
-                    geoLocate();
+                    // geoLocate();
                 }
                 return false;
             }
