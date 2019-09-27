@@ -56,6 +56,16 @@
         android:padding="16dp"
         android:visibility="gone"></androidx.recyclerview.widget.RecyclerView>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchRecyclerView"
+        android:layout_margin="8dp"
+        android:elevation="8dp"
+        android:background="@drawable/white_background"
+        android:text="navigate"
+        android:id="@+id/showRouteButton"
+        android:visibility="gone"></Button>
 
 
 </RelativeLayout>
