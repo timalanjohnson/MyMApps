@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "781129960017-b21jtrefhaggdkigibn9todgt2fil6ku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.timalanjohnson.mymapps",
+            "certificate_hash": "32e9e0d95097ce65f8e031714a2064b0e092ae62"
+          }
+        },
+        {
           "client_id": "781129960017-2ft1i1gd9s5462krtmikhqshtlao44gt.apps.googleusercontent.com",
           "client_type": 3
         }

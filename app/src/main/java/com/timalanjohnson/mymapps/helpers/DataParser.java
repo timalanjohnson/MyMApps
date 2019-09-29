@@ -1,6 +1,9 @@
 package com.timalanjohnson.mymapps.helpers;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.timalanjohnson.mymapps.TripDetails;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +18,9 @@ import java.util.List;
  */
 
 public class DataParser {
+
+    private static final String TAG = "DataParser";
+
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
@@ -29,6 +35,18 @@ public class DataParser {
                 List path = new ArrayList<>();
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
+
+                    String distance = "";
+                    distance = (String) ((JSONObject) ((JSONObject) jLegs.get(0)).get("distance")).get("text");
+                    Log.d(TAG, "parse: distance is " + distance);
+
+                    String time = "";
+                    time = (String) ((JSONObject) ((JSONObject) jLegs.get(0)).get("duration")).get("text");
+                    Log.d(TAG, "parse: distance is " + time);
+
+                    TripDetails.distance = distance;
+                    TripDetails.duration = time;
+
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
 
                     /** Traversing all steps */

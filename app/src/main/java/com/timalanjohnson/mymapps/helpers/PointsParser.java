@@ -19,6 +19,9 @@ import java.util.List;
  */
 
 public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+    private static final String TAG = "PointsParser";
+
     TaskLoadedCallback taskCallback;
     String directionMode = "driving";
 
@@ -36,19 +39,20 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
 
         try {
             jObject = new JSONObject(jsonData[0]);
-            Log.d("mylog", jsonData[0].toString());
+            Log.d(TAG, jsonData[0].toString());
             DataParser parser = new DataParser();
-            Log.d("mylog", parser.toString());
+            Log.d(TAG, parser.toString());
 
             // Starts parsing data
             routes = parser.parse(jObject);
-            Log.d("mylog", "Executing routes");
-            Log.d("mylog", routes.toString());
+            Log.d(TAG, "Executing routes");
+            Log.d(TAG, routes.toString());
 
         } catch (Exception e) {
-            Log.d("mylog", e.toString());
+            Log.d(TAG, e.toString());
             e.printStackTrace();
         }
+        Log.d(TAG, "doInBackground: " + routes);
         return routes;
     }
 
@@ -74,13 +78,13 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
             if (directionMode.equalsIgnoreCase("walking")) {
-                lineOptions.width(10);
+                lineOptions.width(8);
                 lineOptions.color(Color.MAGENTA);
             } else {
-                lineOptions.width(20);
+                lineOptions.width(12);
                 lineOptions.color(Color.BLUE);
             }
-            Log.d("mylog", "onPostExecute lineoptions decoded");
+            Log.d(TAG, "onPostExecute lineoptions decoded");
         }
 
         // Drawing polyline in the Google Map for the i-th route
@@ -89,7 +93,7 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
             taskCallback.onTaskDone(lineOptions);
 
         } else {
-            Log.d("mylog", "without Polylines drawn");
+            Log.d(TAG, "without Polylines drawn");
         }
     }
 }
