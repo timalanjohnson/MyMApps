@@ -385,22 +385,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "commenceTrip: " + tripLogEntry);
 
         DatabaseManager dbm = new DatabaseManager();
-        dbm.testMessage(tripLogEntry);
+        dbm.logTrip(tripLogEntry);
 
         showRouteButton.setVisibility(View.GONE);
         tripInfoLayout.setVisibility(View.GONE);
+
+        moveCamera(currentLatLng, 20f);
     }
 
     // Moves camera to a location with a LatLng object
     private void moveCamera(LatLng latLng, float zoom){
         Log.d(TAG, "moveCamera() called.");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     // Moves camera to a location with a LatLng object
     private void moveCamera(LatLng latLng, float zoom, String title){
         Log.d(TAG, "moveCamera() called.");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
         mMap.addMarker(new MarkerOptions().position(latLng).title(title));
     }
 
