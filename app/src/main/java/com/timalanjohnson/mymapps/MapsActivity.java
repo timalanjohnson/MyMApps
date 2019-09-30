@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -103,6 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Polyline routePolyLine;
     private FirebaseAuth firebaseAuth;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +122,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         tripInfoLayout = findViewById(R.id.tripInfoLayout);
         placesClient = Places.createClient(this);    // Create a new Places client instance
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.getCurrentUser();
         String Uid = firebaseAuth.getUid();
-        Toast.makeText(this, Uid, Toast.LENGTH_SHORT).show();
 
         getLocationPermissions();
 
@@ -157,6 +162,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(searchText.getText().toString().equals("")){
                     hideSearchRecycler();
                 }
+
+                hideTripInfo();
+
             }
 
             @Override
@@ -178,6 +186,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 commenceTrip();
             }
         });
+    }
+
+    private void hideTripInfo() {
+        tripInfoLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -338,6 +350,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         Log.d(TAG, "onTaskDone: adding polyine to map");
         routePolyLine = mMap.addPolyline((PolylineOptions) values[0]);
+        progressDialog.dismiss();
         moveCamera(currentLatLng, 10f);
 
         tripInfoLayout.setVisibility(View.VISIBLE);
@@ -364,6 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void displayRoute(){
         Log.d(TAG, "displayRoute: called.");
 
+        progressDialog.show();
         calculateDirections();
 
         // routePolyLine = mMap.addPolyline(new PolylineOptions().clickable(false).add(currentLatLng, destinationLatLng));
