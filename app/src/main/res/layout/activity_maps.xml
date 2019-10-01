@@ -81,7 +81,7 @@
         android:layout_margin="8dp"
         android:orientation="vertical"
         android:background="@drawable/white_background"
-        map:layout_constraintBottom_toBottomOf="@+id/maps_constraint_layout"
+        map:layout_constraintBottom_toTopOf="@+id/bottomBarLayout"
         android:visibility="gone"
         android:id="@+id/tripInfoLayout">
 
@@ -110,5 +110,49 @@
             android:text="Commence"></Button>
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/white_background"
+        android:elevation="8dp"
+        map:layout_constraintBottom_toBottomOf="@+id/maps_constraint_layout"
+        tools:layout_editor_absoluteX="8dp"
+        android:weightSum="3">
+
+        <Button
+            android:id="@+id/buttonHistory"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="History"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"></Button>
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_toRightOf="@id/buttonHistory"
+            android:text="Settings"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintEnd_toStartOf="@+id/buttonLogout"
+            map:layout_constraintStart_toEndOf="@+id/buttonHistory"></Button>
+
+        <Button
+            android:id="@+id/buttonLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/buttonSettings"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="Logout"
+            android:layout_marginEnd="24dp"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"></Button>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

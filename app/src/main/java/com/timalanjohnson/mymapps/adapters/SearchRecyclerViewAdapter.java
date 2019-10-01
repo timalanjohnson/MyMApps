@@ -1,4 +1,4 @@
-package com.timalanjohnson.mymapps;
+package com.timalanjohnson.mymapps.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,14 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.timalanjohnson.mymapps.R;
+
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.ViewHolder>{
 
     private static final String TAG = "RecyclerViewAdapterLog";
 
@@ -33,40 +34,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         itemListener = listener;
     }
 
-    public RecyclerViewAdapter(Context context, ArrayList<String> placeIdList, ArrayList<String> primaryTextList, ArrayList<String> secondaryTextList) {
+    public SearchRecyclerViewAdapter(Context context, ArrayList<String> placeIdList, ArrayList<String> primaryTextList, ArrayList<String> secondaryTextList) {
         this.context = context;
         this.placeIdList = placeIdList;
         this.primaryTextList = primaryTextList;
         this.secondaryTextList = secondaryTextList;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-
-        RelativeLayout listItem;
-        TextView primaryText;
-        TextView secondaryText;
-        String placeId;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            listItem = itemView.findViewById(R.id.locationListItem);
-            primaryText = itemView.findViewById(R.id.locationPrimaryText);
-            secondaryText = itemView.findViewById(R.id.locationSecondaryText);
-            /*
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (itemListener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION){
-                            itemListener.OnItemClick(position);
-                        }
-                    }
-                }
-            });
-            */
-        }
     }
 
     @NonNull
@@ -102,6 +74,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return primaryTextList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+
+        RelativeLayout listItem;
+        TextView primaryText;
+        TextView secondaryText;
+        String placeId;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            listItem = itemView.findViewById(R.id.locationListItem);
+            primaryText = itemView.findViewById(R.id.locationPrimaryText);
+            secondaryText = itemView.findViewById(R.id.locationSecondaryText);
+        }
     }
 
 }

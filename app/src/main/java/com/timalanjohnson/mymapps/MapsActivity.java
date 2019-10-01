@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,7 +22,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -45,10 +44,10 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.timalanjohnson.mymapps.adapters.SearchRecyclerViewAdapter;
 import com.timalanjohnson.mymapps.helpers.FetchURL;
 import com.timalanjohnson.mymapps.helpers.TaskLoadedCallback;
+import com.timalanjohnson.mymapps.helpers.TripData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +69,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private RecyclerView searchRecycler;
     private Button showRouteButton;
     private Button commenceTripButton;
+    private Button settingsButton;
+    private Button logoutButton;
+    private Button historyButton;
     private View tripInfoLayout;
     private TextView durationTextView;
     private TextView distanceTextView;
@@ -104,6 +106,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Polyline routePolyLine;
     private FirebaseAuth firebaseAuth;
 
+    private DatabaseManager dbm = new DatabaseManager();
+
     private ProgressDialog progressDialog;
 
     @Override
@@ -118,6 +122,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         durationTextView = findViewById(R.id.durationTextView);
         distanceTextView = findViewById(R.id.distanceTextView);
         commenceTripButton = findViewById(R.id.commenceTripButton);
+        logoutButton = findViewById(R.id.buttonLogout);
+        historyButton = findViewById(R.id.buttonHistory);
+        settingsButton = findViewById(R.id.buttonSettings);
         searchRecycler = findViewById(R.id.searchRecyclerView);
         tripInfoLayout = findViewById(R.id.tripInfoLayout);
         placesClient = Places.createClient(this);    // Create a new Places client instance
@@ -127,7 +134,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.getCurrentUser();
-        String Uid = firebaseAuth.getUid();
 
         getLocationPermissions();
 
@@ -186,10 +192,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 commenceTrip();
             }
         });
-    }
 
-    private void hideTripInfo() {
-        tripInfoLayout.setVisibility(View.GONE);
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), HistoryActivity.class));
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseAuth.signOut();
+                finish();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            }
+        });
     }
 
     @Override
@@ -250,13 +275,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void initSearchRecycler(){
         Log.d(TAG, "initRecyclerView: called. Reading ArrayLists");
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, placeIDs, placePrimaryTexts, placeSecondaryTexts);
+        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(this, placeIDs, placePrimaryTexts, placeSecondaryTexts);
         searchRecycler.setAdapter(adapter);
         searchRecycler.setLayoutManager(new LinearLayoutManager(this));
         displaySearchRecycler();
 
         // Listens for recycler selection and gets the Place ID of selected destination.
-        adapter.SetOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+        adapter.SetOnItemClickListener(new SearchRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(int position) {
                 Log.d(TAG, "OnItemClick: called.");
@@ -273,17 +298,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 showRouteButton.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    private void displaySearchRecycler(){
-        Log.d(TAG, "displaySearchRecycler: called");
-        searchRecycler.setVisibility(View.VISIBLE);
-    }
-
-    private void hideSearchRecycler(){
-        Log.d(TAG, "hideSearchRecycler: called");
-        searchRecycler = findViewById(R.id.searchRecyclerView);
-        searchRecycler.setVisibility(View.GONE);
     }
 
     private void setDestinationById(String placeID){
@@ -322,40 +336,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void calculateDirections(){
-        Log.d(TAG, "calculateDirections: defining URL for Directions API call");
-
-        /*
-        https://maps.googleapis.com/maps/api/directions/json?
-        origin=-33.9248685,18.4240553
-        &destination=-34.0208739,18.3682641
-        &mode=driving
-        &key=AIzaSyB6sWXGSLQfiBuPQrcBaAe9dBNdKYvmgqs
-
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=-33.9248685,18.4240553&destination=-34.0208739,18.3682641&mode=driving&key=AIzaSyB6sWXGSLQfiBuPQrcBaAe9dBNdKYvmgqs";
-         */
-
-        String url = getUrl(currentLatLng, destinationLatLng, travelMode);
-
+        String url = getUrl(currentLatLng, destinationLatLng, travelMode); // Build the API call
         Log.d(TAG, "calculateDirections: calling Directions API");
-        new FetchURL(MapsActivity.this).execute(url, "driving");
-
+        new FetchURL(MapsActivity.this).execute(url, travelMode);
     }
 
     @Override
     public void onTaskDone(Object... values) {
-
         Log.d(TAG, "onTaskDone: response from Directions API");
+        // Removing any existing lines
         if (routePolyLine != null){
             routePolyLine.remove();
         }
-        Log.d(TAG, "onTaskDone: adding polyine to map");
-        routePolyLine = mMap.addPolyline((PolylineOptions) values[0]);
-        progressDialog.dismiss();
-        moveCamera(currentLatLng, 10f);
 
+        // Adding route visualisation
+        Log.d(TAG, "onTaskDone: adding polyline to map");
+        routePolyLine = mMap.addPolyline((PolylineOptions) values[0]);
+
+        // UI
+        progressDialog.dismiss();
         tripInfoLayout.setVisibility(View.VISIBLE);
-        durationTextView.setText("Duration: " + TripDetails.duration);
-        distanceTextView.setText("Distance: " + TripDetails.distance);
+        distanceTextView.setText("Distance: " + TripData.distance);
+        durationTextView.setText("Estimated Duration: " + TripData.duration);
+        moveCamera(currentLatLng, 11f);
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
@@ -376,35 +379,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void displayRoute(){
         Log.d(TAG, "displayRoute: called.");
-
         progressDialog.show();
         calculateDirections();
-
-        // routePolyLine = mMap.addPolyline(new PolylineOptions().clickable(false).add(currentLatLng, destinationLatLng));
     }
     
     private void commenceTrip(){
-        Log.d(TAG, "commenceTrip: called.");
+        Log.d(TAG, "commenceTrip: ");
 
-        String tripStart = currentLatLng.toString();
-        String tripDestination = destinationName + " ( " + destinationLatLng.toString() + " )";
-        String tripDistance = TripDetails.distance;
-        String tripDuration = TripDetails.duration;
+        SimpleDateFormat time = new SimpleDateFormat("'On ' yyyy.MM.dd 'at' HH:mm");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z");
-        String currentDateAndTime = sdf.format(new Date());
+        // Finalising trip details for logging to the database
+        TripData.origin = currentLatLng.toString();
+        TripData.destination = destinationName;
+        TripData.time = time.format(new Date());
+        TripData.travelMode = travelMode;
 
-        String tripLogEntry = "At " + currentDateAndTime + " user commenced a trip from " + tripStart + " to " + tripDestination + " and should travel " + tripDistance + " over " + tripDuration + ".";
+        // Logging trip to the database
+        Trip log = new Trip(TripData.origin, TripData.destination, TripData.travelMode, TripData.distance, TripData.duration, TripData.time);
+        dbm.logTrip(log);
 
-        Log.d(TAG, "commenceTrip: " + tripLogEntry);
-
-        DatabaseManager dbm = new DatabaseManager();
-        dbm.logTrip(tripLogEntry);
-
+        // UI
         showRouteButton.setVisibility(View.GONE);
         tripInfoLayout.setVisibility(View.GONE);
+        moveCamera(currentLatLng, 18f);
+    }
 
-        moveCamera(currentLatLng, 20f);
+    private void hideTripInfo() {
+        tripInfoLayout.setVisibility(View.GONE);
+    }
+
+    private void displaySearchRecycler(){
+        searchRecycler.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSearchRecycler(){
+        searchRecycler.setVisibility(View.GONE);
+    }
+
+    // Moves camera to a location with a LatLng object
+    private void moveCameraNoAnimation(LatLng latLng, float zoom){
+        Log.d(TAG, "moveCamera() called.");
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     // Moves camera to a location with a LatLng object
@@ -439,7 +454,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                             currentLat = currentLocation.getLatitude();
                             currentLng = currentLocation.getLongitude();
-                            moveCamera(currentLatLng, DEFAULT_ZOOM);
+                            moveCameraNoAnimation(currentLatLng, DEFAULT_ZOOM);
                         } else {
                             // Unable to get current location
                             Log.d(TAG, "Current location is null.");
