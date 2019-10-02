@@ -2,8 +2,8 @@ package com.timalanjohnson.mymapps;
 
 public class UserPreferences {
 
-    private String travelMode; // Driving, walking, or public transport
-    private Boolean metricMeasurements; // True for metric measurements, false for imperial
+    public static String travelMode; // Driving, walking, or public transport
+    public static Boolean metricMeasurements; // True for metric measurements, false for imperial
 
     public UserPreferences(){}
 

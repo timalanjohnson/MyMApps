@@ -28,21 +28,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Driving" />
+            android:text="Driving"
+            android:onClick="checkRadioButtons"/>
 
         <RadioButton
             android:id="@+id/radioButtonWalking"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Walking" />
+            android:text="Walking"
+            android:onClick="checkRadioButtons" />
 
         <RadioButton
-            android:id="@+id/radioButtonPublicTransport"
+            android:id="@+id/radioButtonTransit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Public Transport" />
+            android:text="Public Transport"
+            android:onClick="checkRadioButtons" />
     </RadioGroup>
 
     <View
@@ -62,6 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <RadioGroup
+        android:id="@+id/radioGroupUnits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -69,18 +73,31 @@
         app:layout_constraintTop_toBottomOf="@+id/measurement_text">
 
         <RadioButton
-            android:id="@+id/radioMetric"
+            android:id="@+id/radioButtonMetric"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Metric (km)" />
+            android:text="Metric (km)"
+            android:onClick="checkRadioButtons" />
 
         <RadioButton
-            android:id="@+id/radioImperial"
+            android:id="@+id/radioButtonImperial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Imperial (mi)" />
+            android:text="Imperial (mi)"
+            android:onClick="checkRadioButtons" />
     </RadioGroup>
+
+    <Button
+        android:id="@+id/buttonSettingsUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:background="@drawable/primary_background"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupUnits"
+        android:onClick="updateSettings"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

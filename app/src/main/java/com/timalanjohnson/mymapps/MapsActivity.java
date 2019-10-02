@@ -101,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double destinationLng;
     private LatLng destinationLatLng;
 
-    private String travelMode = "driving";
+    private String travelMode;
 
     Polyline routePolyLine;
     private FirebaseAuth firebaseAuth;
@@ -134,6 +134,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.getCurrentUser();
+
+        dbm.initUserPreferences();
+
+        Log.d(TAG, "onCreate: " + UserPreferences.travelMode);
 
         getLocationPermissions();
 
@@ -336,6 +340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void calculateDirections(){
+        travelMode = UserPreferences.travelMode;
         String url = getUrl(currentLatLng, destinationLatLng, travelMode); // Build the API call
         Log.d(TAG, "calculateDirections: calling Directions API");
         new FetchURL(MapsActivity.this).execute(url, travelMode);

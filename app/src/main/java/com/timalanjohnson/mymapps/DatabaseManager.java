@@ -2,9 +2,14 @@ package com.timalanjohnson.mymapps;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class DatabaseManager {
 
@@ -28,6 +33,23 @@ public class DatabaseManager {
                 Log.d(TAG, "logTrip: " + e.getMessage());
             }
         }
+    }
+
+    public void initUserPreferences(){
+
+        database.child("Preferences").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserPreferences.travelMode = dataSnapshot.child("travelMode").getValue(String.class);
+                UserPreferences.metricMeasurements = dataSnapshot.child("metricMeasurements").getValue(Boolean.class);
+                Log.d(TAG, "settings: " + UserPreferences.travelMode + UserPreferences.metricMeasurements);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "settings: " + databaseError.getMessage());
+            }
+        });
     }
 
     public void setUserPreferences(UserPreferences preferences){

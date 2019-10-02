@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.timalanjohnson.mymapps.UserPreferences;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
         this.mContext = mContext;
     }
 
+
     @Override
     protected String doInBackground(String... strings) {
         // For storing data from web service
@@ -44,7 +47,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        PointsParser parserTask = new PointsParser(mContext, directionMode);
+        PointsParser parserTask = new PointsParser(mContext, UserPreferences.travelMode);
         // Invokes the thread for parsing the JSON data
         parserTask.execute(s);
     }
