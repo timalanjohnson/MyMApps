@@ -24,10 +24,12 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
 
     TaskLoadedCallback taskCallback;
     String directionMode = "driving";
+    String units = "metric";
 
-    public PointsParser(Context mContext, String directionMode) {
+    public PointsParser(Context mContext, String directionMode, String units) {
         this.taskCallback = (TaskLoadedCallback) mContext;
         this.directionMode = directionMode;
+        this.units = units;
     }
 
     // Parsing the data in non-ui thread

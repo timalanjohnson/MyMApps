@@ -102,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng destinationLatLng;
 
     private String travelMode;
+    private String units;
 
     Polyline routePolyLine;
     private FirebaseAuth firebaseAuth;
@@ -341,9 +342,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void calculateDirections(){
         travelMode = UserPreferences.travelMode;
-        String url = getUrl(currentLatLng, destinationLatLng, travelMode); // Build the API call
+        String url = getUrl(currentLatLng, destinationLatLng, travelMode, units); // Build the API call
         Log.d(TAG, "calculateDirections: calling Directions API");
-        new FetchURL(MapsActivity.this).execute(url, travelMode);
+        new FetchURL(MapsActivity.this).execute(url, travelMode, units);
     }
 
     @Override
@@ -366,19 +367,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         moveCamera(currentLatLng, 11f);
     }
 
-    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+    private String getUrl(LatLng origin, LatLng dest, String directionMode, String units) {
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
         // Mode
         String mode = "mode=" + directionMode;
+        // Units
+        String unit = "units=" + UserPreferences.units;
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        String parameters = str_origin + "&" + str_dest + "&" + mode + "&" + unit;
         // Output format
         String output = "json";
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.API_KEY);
+
+        Log.d(TAG, "getUrl: " + url);
+
         return url;
     }
 

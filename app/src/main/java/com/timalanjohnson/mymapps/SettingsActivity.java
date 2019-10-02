@@ -46,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         buttonSettingsUpdate = findViewById(R.id.buttonSettingsUpdate);
 
         String mode = preferences.getTravelMode();
+        String units = preferences.getUnits();
 
         try {
             if (mode.equals("driving")){
@@ -60,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
                 radioTransit.setChecked(true);
             }
 
-            if (preferences.getMetricMeasurements()) {
+            if (units.equals("metric")) {
                 radioMetric.setChecked(true);
             } else {
                 radioImperial.setChecked(true);
@@ -91,18 +92,20 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
             case R.id.radioButtonMetric:
                 if (checked)
-                    preferences.setMetricMeasurements(true);
+                    preferences.setUnits("metric");
                 break;
             case R.id.radioButtonImperial:
                 if (checked)
-                    preferences.setMetricMeasurements(false);
+                    preferences.setUnits("imperial");
+                    UserPreferences.units = "imperial";
                 break;
         }
 
     }
 
     public void updateSettings(View view) {
-        //Toast.makeText(this, preferences.getTravelMode() + ", " + preferences.getMetricMeasurements(), Toast.LENGTH_SHORT).show();
         dbm.setUserPreferences(preferences);
+        Toast.makeText(this, "Settings updated.", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "updateSettings: " + UserPreferences.travelMode + UserPreferences.units);
     }
 }

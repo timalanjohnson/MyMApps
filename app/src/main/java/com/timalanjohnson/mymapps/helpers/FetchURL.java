@@ -23,6 +23,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
 
     Context mContext;
     String directionMode = "driving";
+    String units = "metric";
 
     public FetchURL(Context mContext) {
         this.mContext = mContext;
@@ -34,6 +35,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
         // For storing data from web service
         String data = "";
         directionMode = strings[1];
+        units = strings[2];
         try {
             // Fetching the data from web service
             data = downloadUrl(strings[0]);
@@ -47,7 +49,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        PointsParser parserTask = new PointsParser(mContext, UserPreferences.travelMode);
+        PointsParser parserTask = new PointsParser(mContext, UserPreferences.travelMode, UserPreferences.units);
         // Invokes the thread for parsing the JSON data
         parserTask.execute(s);
     }

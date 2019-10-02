@@ -41,8 +41,8 @@ public class DatabaseManager {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserPreferences.travelMode = dataSnapshot.child("travelMode").getValue(String.class);
-                UserPreferences.metricMeasurements = dataSnapshot.child("metricMeasurements").getValue(Boolean.class);
-                Log.d(TAG, "settings: " + UserPreferences.travelMode + UserPreferences.metricMeasurements);
+                UserPreferences.units = dataSnapshot.child("units").getValue(String.class);
+                Log.d(TAG, "settings: " + UserPreferences.travelMode + UserPreferences.units);
             }
 
             @Override

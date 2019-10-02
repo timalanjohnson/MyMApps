@@ -80,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         progressDialog.dismiss();
                         if (task.isSuccessful()){
 
-                            UserPreferences preferences = new UserPreferences("Driving", true);
+                            UserPreferences preferences = new UserPreferences("driving", "metric");
                             dbm.setUserPreferences(preferences);
 
                             // User is registered successfully
