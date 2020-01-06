@@ -11,7 +11,7 @@
         android:id="@+id/travel_mode_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select your preferred mode of transport."
+        android:text="Select your preferred default mode of transport."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

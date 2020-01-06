@@ -21,7 +21,10 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -69,12 +73,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private RecyclerView searchRecycler;
     private Button showRouteButton;
     private Button commenceTripButton;
+    private Button cancelTripButton;
+    private Button cancelMidTripButton;
     private Button settingsButton;
     private Button logoutButton;
     private Button historyButton;
     private View tripInfoLayout;
     private TextView durationTextView;
     private TextView distanceTextView;
+    private RadioButton radioDriving;
+    private RadioButton radioWalking;
+    private RadioButton radioTransit;
+    private RadioGroup radioGroupMode;
 
     // Variables
     private GoogleMap mMap;
@@ -88,6 +98,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> placeIDs = new ArrayList<>();
     private ArrayList<String> placePrimaryTexts = new ArrayList<>();
     private ArrayList<String> placeSecondaryTexts = new ArrayList<>();
+
+    private UserPreferences preferences = new UserPreferences();
 
     private String currentID;
     private double currentLat;
@@ -123,12 +135,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         durationTextView = findViewById(R.id.durationTextView);
         distanceTextView = findViewById(R.id.distanceTextView);
         commenceTripButton = findViewById(R.id.commenceTripButton);
+        cancelTripButton = findViewById(R.id.cancelTripButton);
+        cancelMidTripButton = findViewById(R.id.cancelMidTripButton);
         logoutButton = findViewById(R.id.buttonLogout);
         historyButton = findViewById(R.id.buttonHistory);
         settingsButton = findViewById(R.id.buttonSettings);
         searchRecycler = findViewById(R.id.searchRecyclerView);
         tripInfoLayout = findViewById(R.id.tripInfoLayout);
         placesClient = Places.createClient(this);    // Create a new Places client instance
+        radioGroupMode = findViewById(R.id.mapsModeButtonGroup);
+        radioDriving = findViewById(R.id.radioButtonDriving2);
+        radioWalking = findViewById(R.id.radioButtonWalking2);
+        radioTransit = findViewById(R.id.radioButtonTransit2);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
@@ -198,6 +216,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        cancelTripButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelTrip();
+            }
+        });
+
+        cancelMidTripButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelTrip();
+            }
+        });
+
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,7 +279,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         final AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setSessionToken(token).setQuery(query).build();
+
+        // FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder().setCountry("za").setSessionToken(token).setQuery(query).build();
 
         placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
 
@@ -340,6 +374,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    public void checkRadioButtons(View view) {
+
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioButtonDriving2:
+                if (checked)
+                    preferences.setTravelMode("driving");
+                    dbm.setUserPreferences(preferences);
+                    calculateDirections();
+                    displayRoute();
+                break;
+            case R.id.radioButtonWalking2:
+                if (checked)
+                    preferences.setTravelMode("walking");
+                    dbm.setUserPreferences(preferences);
+                    calculateDirections();
+                    displayRoute();
+                break;
+            case R.id.radioButtonTransit2:
+                if (checked)
+                    preferences.setTravelMode("transit");
+                    dbm.setUserPreferences(preferences);
+                    calculateDirections();
+                    displayRoute();
+                break;
+        }
+
+    }
+
     private void calculateDirections(){
         travelMode = UserPreferences.travelMode;
         String url = getUrl(currentLatLng, destinationLatLng, travelMode, units); // Build the API call
@@ -365,6 +430,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         distanceTextView.setText("Distance: " + TripData.distance);
         durationTextView.setText("Estimated Duration: " + TripData.duration);
         moveCamera(currentLatLng, 11f);
+
+        String mode = UserPreferences.travelMode;
+
+        try {
+            if (mode.equals("driving")){
+                radioDriving.setChecked(true);
+            }
+
+            if (mode.equals("walking")){
+                radioWalking.setChecked(true);
+            }
+
+            if (mode.equals("transit")){
+                radioTransit.setChecked(true);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "onCreate: " + e.getMessage());
+        }
     }
 
     private String getUrl(LatLng origin, LatLng dest, String directionMode, String units) {
@@ -412,7 +495,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // UI
         showRouteButton.setVisibility(View.GONE);
         tripInfoLayout.setVisibility(View.GONE);
-        moveCamera(currentLatLng, 18f);
+        cancelMidTripButton.setVisibility(View.VISIBLE);
+
+        tripCamera();
+    }
+
+    private void cancelTrip(){
+        if (routePolyLine != null){
+            routePolyLine.remove();
+        }
+        hideTripInfo();
+        hideNavigateButton();
+        clearSearchField();
+        cancelMidTripButton.setVisibility(View.GONE);
+        moveCamera(currentLatLng, DEFAULT_ZOOM);
+    }
+
+    private void clearSearchField(){
+        searchText.setText("");
+    }
+
+    private void hideNavigateButton(){
+        showRouteButton.setVisibility(View.GONE);
     }
 
     private void hideTripInfo() {
@@ -435,8 +539,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Moves camera to a location with a LatLng object
     private void moveCamera(LatLng latLng, float zoom){
-        Log.d(TAG, "moveCamera() called.");
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        Log.d(TAG, "moveCamera() called.");CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(currentLatLng)
+                .zoom(zoom)
+                .bearing(0)
+                .tilt(0)
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    // Angles the camera to begin the trip
+    private void tripCamera() {
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(currentLatLng)
+                .zoom(18)
+                .bearing(90)
+                .tilt(40)
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     // Moves camera to a location with a LatLng object

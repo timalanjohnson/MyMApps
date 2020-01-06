@@ -31,7 +31,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private ProgressDialog progressDialog;
 
     private FirebaseAuth firebaseAuth;
-    private DatabaseManager dbm = new DatabaseManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         progressDialog.dismiss();
                         if (task.isSuccessful()){
 
+                            DatabaseManager dbm = new DatabaseManager();
                             UserPreferences preferences = new UserPreferences("driving", "metric");
                             dbm.setUserPreferences(preferences);
 

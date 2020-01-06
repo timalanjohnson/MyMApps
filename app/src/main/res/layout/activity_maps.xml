@@ -31,6 +31,7 @@
             android:layout_height="24dp"
             android:layout_margin="12dp"
             android:layout_centerVertical="true"
+            android:alpha="0.88"
             android:id="@+id/ic_search"
             android:src="@drawable/ic_search">
         </ImageView>
@@ -72,7 +73,8 @@
         android:text="navigate"
         map:layout_constraintBottom_toTopOf="@+id/tripInfoLayout"
         map:layout_constraintRight_toRightOf="@+id/maps_constraint_layout"
-        android:visibility="gone"></Button>
+        android:visibility="gone">
+    </Button>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,17 +101,78 @@
             android:text="Trip Distance"
             android:id="@+id/distanceTextView"></TextView>
 
-        <Button
+        <RadioGroup
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="8dp"
-            android:elevation="8dp"
-            android:background="@drawable/primary_background"
-            android:textColor="@color/colorWhite"
-            android:id="@+id/commenceTripButton"
-            android:text="Commence"></Button>
+            android:orientation="horizontal"
+            android:id="@+id/mapsModeButtonGroup">
+
+            <RadioButton
+                android:id="@+id/radioButtonDriving2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:onClick="checkRadioButtons"
+                android:text="Driving" />
+
+            <RadioButton
+                android:id="@+id/radioButtonWalking2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:onClick="checkRadioButtons"
+                android:text="Walking" />
+
+            <RadioButton
+                android:id="@+id/radioButtonTransit2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:onClick="checkRadioButtons"
+                android:text="Transit" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:elevation="8dp"
+                android:background="@drawable/grey_background"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/cancelTripButton"
+                android:text="Cancel"></Button>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:elevation="8dp"
+                android:background="@drawable/primary_background"
+                android:textColor="@color/colorWhite"
+                android:id="@+id/commenceTripButton"
+                android:text="Commence"></Button>
+        </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:elevation="8dp"
+        android:background="@drawable/white_background"
+        android:textColor="@color/colorPrimary"
+        android:id="@+id/cancelMidTripButton"
+        map:layout_constraintBottom_toTopOf="@id/bottomBarLayout"
+        android:visibility="gone"
+        android:text="Cancel Trip"></Button>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBarLayout"
@@ -122,36 +185,72 @@
         tools:layout_editor_absoluteX="8dp"
         android:weightSum="3">
 
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="12dp"
+            android:id="@+id/ic_history"
+            android:alpha="0.88"
+            android:src="@drawable/ic_history"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintEnd_toStartOf="@id/buttonHistory">
+        </ImageView>
+
         <Button
             android:id="@+id/buttonHistory"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:text="History"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent"></Button>
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintStart_toEndOf="@+id/ic_history"
+            map:layout_constraintEnd_toStartOf="@id/ic_settings">
+        </Button>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:id="@+id/ic_settings"
+            android:src="@drawable/ic_settings"
+            android:alpha="0.88"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintStart_toEndOf="@+id/buttonHistory"
+            map:layout_constraintEnd_toStartOf="@id/buttonSettings">
+        </ImageView>
 
         <Button
             android:id="@+id/buttonSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_toRightOf="@id/buttonHistory"
             android:text="Settings"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintEnd_toStartOf="@+id/buttonLogout"
-            map:layout_constraintStart_toEndOf="@+id/buttonHistory"></Button>
+            map:layout_constraintStart_toEndOf="@+id/ic_settings"
+            map:layout_constraintEnd_toStartOf="@id/ic_logout"></Button>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:id="@+id/ic_logout"
+            android:src="@drawable/ic_logout"
+            android:alpha="0.88"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintStart_toEndOf="@+id/buttonSettings"
+            map:layout_constraintEnd_toStartOf="@id/buttonLogout">
+        </ImageView>
 
         <Button
             android:id="@+id/buttonLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/buttonSettings"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:text="Logout"
-            android:layout_marginEnd="24dp"
             map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintStart_toEndOf="@+id/ic_logout"
             map:layout_constraintEnd_toEndOf="parent"></Button>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

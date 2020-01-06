@@ -17,6 +17,13 @@
             android:orientation="vertical"
             android:layout_margin="8dp">
 
+            <TextView
+                android:id="@+id/textViewEmailAddressRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:text="Email Address" />
+
             <EditText
                 android:id="@+id/editTextEmailRegister"
                 android:layout_width="match_parent"
@@ -25,6 +32,13 @@
                 android:layout_marginVertical="16dp"
                 android:hint="@string/hintEnterEmail"
                 android:inputType="textEmailAddress"></EditText>
+
+            <TextView
+                android:id="@+id/textViewPasswordRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:text="Password" />
 
             <EditText
                 android:id="@+id/editTextPasswordRegister"
